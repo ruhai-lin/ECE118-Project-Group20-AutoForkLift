@@ -38,8 +38,8 @@ while True:
         Rx, Ry, Rz = degrees(tag.x_rotation), degrees(tag.y_rotation), degrees(tag.z_rotation)
 
         # 串口发送格式：包含Tag ID
-        msg = "Tag: %d, Tx: %.2f, Ty: %.2f, Tz: %.2f, Rx: %.2f, Ry: %.2f, Rz: %.2f\r\n" % (tag_id, Tx, Ty, Tz, Rx, Ry, Rz)
+        msg = "Tag: %d, Tx: %d, Ty: %d, Tz: %d, Rx: %d, Ry: %d, Rz: %d\r\n" % (tag_id, Tx*10, Ty*10, Tz*10, Rx, Ry, Rz)
         uart.write(msg)
-
+        # print(msg)
     # 可选：在IDE中显示帧率
     # print("FPS:", clock.fps())
