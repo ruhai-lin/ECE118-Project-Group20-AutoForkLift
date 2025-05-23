@@ -41,5 +41,5 @@ while True:
         msg = "Tag: %d, Tx: %d, Ty: %d, Tz: %d, Rx: %d, Ry: %d, Rz: %d\r\n" % (tag_id, Tx*10, Ty*10, Tz*10, Rx, Ry, Rz)
         uart.write(msg)
         # print(msg)
-    # 可选：在IDE中显示帧率
+
     # print("FPS:", clock.fps())

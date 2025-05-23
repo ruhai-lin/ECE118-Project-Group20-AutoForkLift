@@ -1,0 +1,9 @@
+# macOS files
+.DS_Store
+
+# MPLAB X trash
+UNO32.X/.generated_files/
+UNO32.X/nbproject/private/
+
+build/
+dist/
