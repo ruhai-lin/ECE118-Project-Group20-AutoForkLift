@@ -14,7 +14,7 @@
 #include "ES_Events.h"
 
 
-#define TIMERS_USED 2
+#define TIMERS_USED 4
 
 
 // Public Function Prototypes

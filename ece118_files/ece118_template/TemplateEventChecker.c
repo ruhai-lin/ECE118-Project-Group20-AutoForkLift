@@ -1,16 +1,19 @@
 #include "ES_Configure.h"
 #include "TemplateEventChecker.h"
 #include "ES_Events.h"
-#include "TemplateHSM.h"
+#include "HSM_Top.h"
 #include "serial.h"
 #include "AD.h"
 #include "stdio.h"
 #include <BOARD.h>
 #include <xc.h>
+#include <math.h>
 
 #define BATTERY_DISCONNECT_THRESHOLD 175
 #define CAMERA_BUFFER_SIZE 128
 #define MAX_TAG_ID 4
+
+CameraData_t LatestCameraData;  // <-- 这是定义（不加 static，也不加 extern）
 
 
 uint8_t TemplateCheckBattery(void) {
@@ -31,7 +34,7 @@ uint8_t TemplateCheckBattery(void) {
         returnVal = TRUE;
         lastEvent = curEvent; // update history
 #ifndef EVENTCHECKER_TEST           // keep this as is for test harness
-        PostTemplateHSM(thisEvent); // Change it to your target service's post function
+        PostTopHSM(thisEvent); // Change it to your target service's post function
 #else
         SaveEvent(thisEvent);
 #endif   
@@ -57,18 +60,20 @@ uint8_t CheckCamera(void) {
     while (UART2_DataAvailable()) {
         char c = UART2_ReadChar();
 
-
         if (c == '\n' || c == '\r') {
             rxBuffer[bufferIndex] = '\0';
             bufferIndex = 0;
 
-            int tagID = -1;
-            float tx, ty, tz, rx, ry, rz;
-            int parsed = sscanf(rxBuffer, "Tag:%d, Tx: %f, Ty: %f, Tz: %f, Rx: %f, Ry: %f, Rz: %f",
-                                &tagID, &tx, &ty, &tz, &rx, &ry, &rz);
-
+            
+            LatestCameraData.tagID = -1;
+            float parsed = sscanf(rxBuffer, "%d,%d,%d,%d,%d,%d,%d",
+                    &LatestCameraData.tagID, &LatestCameraData.tx, &LatestCameraData.ty,
+                    &LatestCameraData.tz, &LatestCameraData.rx, &LatestCameraData.ry, &LatestCameraData.rz);
+            
             if (parsed >= 1) {
-                switch (tagID) {
+                printf("Tag = %d \n", LatestCameraData.tagID);
+
+                switch (LatestCameraData.tagID) {
                     case 0: curEvent = APRILTAG_0_DETECTED; break;
                     case 1: curEvent = APRILTAG_1_DETECTED; break;
                     case 2: curEvent = APRILTAG_2_DETECTED; break;
@@ -79,12 +84,12 @@ uint8_t CheckCamera(void) {
 
                 if (curEvent != lastEvent) {
                     thisEvent.EventType = curEvent;
-                    thisEvent.EventParam = tagID;
+                    thisEvent.EventParam = LatestCameraData.tagID;
                     lastEvent = curEvent;
                     returnVal = TRUE;
 
 #ifndef EVENTCHECKER_TEST
-                    PostTemplateHSM(thisEvent);  
+                    PostTopHSM(thisEvent);  
 #else
                     SaveEvent(thisEvent);
 #endif

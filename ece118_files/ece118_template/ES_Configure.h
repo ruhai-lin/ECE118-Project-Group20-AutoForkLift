@@ -98,8 +98,8 @@ static const char *EventNames[] = {
 // corresponding timer expires. All 16 must be defined. If you are not using
 // a timers, then you can use TIMER_UNUSED
 #define TIMER_UNUSED ((pPostFunc)0)
-#define TIMER0_RESP_FUNC PostTemplateHSM // Replace TIMER_UNUSED with e.g.,PostTemplateService 
-#define TIMER1_RESP_FUNC TIMER_UNUSED
+#define TIMER0_RESP_FUNC PostTopHSM // Replace TIMER_UNUSED with e.g.,PostTemplateService 
+#define TIMER1_RESP_FUNC PostTopHSM
 #define TIMER2_RESP_FUNC TIMER_UNUSED
 #define TIMER3_RESP_FUNC TIMER_UNUSED
 #define TIMER4_RESP_FUNC TIMER_UNUSED
@@ -123,7 +123,7 @@ static const char *EventNames[] = {
 // the timer number matches where the timer event will be routed
 
 #define GENERIC_NAMED_TIMER 0 /*make sure this is enabled above and posting to the correct state machine*/
-
+#define DELAY_TIMER  1
 
 /****************************************************************************/
 // The maximum number of services sets an upper bound on the number of 
@@ -154,11 +154,11 @@ static const char *EventNames[] = {
 // These are the definitions for Service 1
 #if NUM_SERVICES > 1
 // the header file with the public fuction prototypess
-#define SERV_1_HEADER "TemplateHSM.h"
+#define SERV_1_HEADER "HSM_Top.h"
 // the name of the Init function
-#define SERV_1_INIT InitTemplateHSM
+#define SERV_1_INIT InitTopHSM
 // the name of the run function
-#define SERV_1_RUN RunTemplateHSM
+#define SERV_1_RUN RunTopHSM
 // How big should this services Queue be?
 #define SERV_1_QUEUE_SIZE 3
 #endif

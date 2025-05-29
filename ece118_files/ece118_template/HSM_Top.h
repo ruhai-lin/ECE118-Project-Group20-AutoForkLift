@@ -17,8 +17,8 @@
  * Updated on 16/Sep/2013
  */
 
-#ifndef HSM_Template_H  // <- This should be changed to your own guard on both
-#define HSM_Template_H  //    of these lines
+#ifndef HSM_Top_H  // <- This should be changed to your own guard on both
+#define HSM_Top_H  //    of these lines
 
 
 /*******************************************************************************
@@ -51,7 +51,7 @@
  *        to rename this to something appropriate.
  *        Returns TRUE if successful, FALSE otherwise
  * @author J. Edward Carryer, 2011.10.23 19:25 */
-uint8_t InitTemplateHSM(uint8_t Priority);
+uint8_t InitTopHSM(uint8_t Priority);
 
 
 /**
@@ -63,7 +63,7 @@ uint8_t InitTemplateHSM(uint8_t Priority);
  *        be posted to. Remember to rename to something appropriate.
  *        Returns TRUE if successful, FALSE otherwise
  * @author J. Edward Carryer, 2011.10.23 19:25 */
-uint8_t PostTemplateHSM(ES_Event ThisEvent);
+uint8_t PostTopHSM(ES_Event ThisEvent);
 
 
 
@@ -83,7 +83,7 @@ uint8_t PostTemplateHSM(ES_Event ThisEvent);
  *       not consumed as these need to pass pack to the higher level state machine.
  * @author J. Edward Carryer, 2011.10.23 19:25
  * @author Gabriel H Elkaim, 2011.10.23 19:25 */
-ES_Event RunTemplateHSM(ES_Event ThisEvent);
+ES_Event RunTopHSM(ES_Event ThisEvent);
 
-#endif /* HSM_Template_H */
+#endif /* HSM_Top_H */
 

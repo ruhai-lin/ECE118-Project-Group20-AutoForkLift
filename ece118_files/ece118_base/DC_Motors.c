@@ -2,6 +2,7 @@
 #include "BOARD.h"
 #include <xc.h>
 #include "IO_Ports.h"
+#include "timers.h"
 
 // Motor A (IN1, IN2)
 #define MOTOR_A_IN1_TRIS PORTV05_TRIS
@@ -28,22 +29,31 @@ void DC_Motors_Init(void)
     MOTOR_B_IN2_LAT = 0;
 }
 
-void DC_Motors_Forward(void)
+void DC_Motors_Stop(void)
 {
-    MOTOR_A_IN1_LAT = 1;
+    MOTOR_A_IN1_LAT = 0;
     MOTOR_A_IN2_LAT = 0;
-
-    MOTOR_B_IN1_LAT = 1;
+    MOTOR_B_IN1_LAT = 0;
     MOTOR_B_IN2_LAT = 0;
 }
 
-void DC_Motors_Backward(void)
+
+void DC_Motors_Forward(void)
 {
     MOTOR_A_IN1_LAT = 0;
     MOTOR_A_IN2_LAT = 1;
 
     MOTOR_B_IN1_LAT = 0;
     MOTOR_B_IN2_LAT = 1;
+}
+
+void DC_Motors_Backward(void)
+{
+    MOTOR_A_IN1_LAT = 1;
+    MOTOR_A_IN2_LAT = 0;
+
+    MOTOR_B_IN1_LAT = 1;
+    MOTOR_B_IN2_LAT = 0;
 }
 
 void DC_Motors_Left(void)

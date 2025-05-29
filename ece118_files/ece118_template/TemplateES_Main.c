@@ -4,6 +4,7 @@
 #include "LED.h"
 #include "DC_Motors.h"
 #include "RC_Servo.h"
+#include "timers.h"
 #include "ES_Configure.h"
 #include "ES_Framework.h"
 
@@ -32,9 +33,9 @@ void main(void)
     BOARD_Init();
     UART2_Init();
     LED_Init();
-    LED_AddBanks(LED_BANK1);
     DC_Motors_Init();
     RC_Init();
+    TIMERS_Init();
     
     if (RC_AddPins(RC_PORTX04) == ERROR) {
         printf("Failed to add servo pin!\n");

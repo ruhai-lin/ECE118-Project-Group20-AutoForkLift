@@ -6,7 +6,6 @@
                    projectFiles="true">
       <itemPath>../ece118_files/ece118_template/ES_Configure.h</itemPath>
       <itemPath>../ece118_files/ece118_template/TemplateEventChecker.h</itemPath>
-      <itemPath>../ece118_files/ece118_template/TemplateHSM.h</itemPath>
       <itemPath>../ece118_files/ece118_template/TemplateService.h</itemPath>
       <itemPath>../ece118_files/ece118_template/TemplateSubHSM.h</itemPath>
       <itemPath>../ece118_files/ece118_base/AD.h</itemPath>
@@ -34,6 +33,8 @@
       <itemPath>../ece118_files/ece118_base/Stepper.h</itemPath>
       <itemPath>../ece118_files/ece118_base/timers.h</itemPath>
       <itemPath>../ece118_files/ece118_base/DC_Motors.h</itemPath>
+      <itemPath>../ece118_files/ece118_template/HSM_Top.h</itemPath>
+      <itemPath>../ece118_files/ece118_template/HSMSub_Idle.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -68,11 +69,14 @@
       <itemPath>../ece118_files/ece118_base/timers.c</itemPath>
       <itemPath>../ece118_files/ece118_template/TemplateES_Main.c</itemPath>
       <itemPath>../ece118_files/ece118_template/TemplateEventChecker.c</itemPath>
-      <itemPath>../ece118_files/ece118_template/TemplateHSM.c</itemPath>
       <itemPath>../ece118_files/ece118_template/TemplateService.c</itemPath>
       <itemPath>../ece118_files/ece118_template/TemplateSubHSM.c</itemPath>
-      <itemPath>../ece118_files/ece118_base/Main_test.c</itemPath>
       <itemPath>../ece118_files/ece118_base/DC_Motors.c</itemPath>
+      <itemPath>../ece118_files/ece118_template/HSM_Top.c</itemPath>
+      <itemPath>../ece118_files/ece118_template/HSMSub_Idle.c</itemPath>
+      <itemPath>../ece118_files/ece118_template/HSMSub_Navigation.c</itemPath>
+      <itemPath>../ece118_files/ece118_base/HX711_test.c</itemPath>
+      <itemPath>DC_Motors_Test.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -122,7 +126,37 @@
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
-      <item path="../ece118_files/ece118_base/Main_test.c"
+      <item path="../ece118_files/ece118_base/HX711_test.c"
+            ex="true"
+            overriding="false">
+        <C32>
+        </C32>
+        <C32-AR>
+        </C32-AR>
+        <C32-AS>
+        </C32-AS>
+        <C32-CO>
+        </C32-CO>
+        <C32-LD>
+        </C32-LD>
+        <C32CPP>
+        </C32CPP>
+        <C32Global>
+        </C32Global>
+      </item>
+      <item path="../ece118_files/ece118_template/HSMSub_Idle.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../ece118_files/ece118_template/HSMSub_Navigation.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../ece118_files/ece118_template/TemplateSubHSM.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../ece118_files/ece118_template/TemplateSubHSM.h"
             ex="true"
             overriding="false">
       </item>
@@ -263,9 +297,14 @@
         <property key="stack-smashing" value=""/>
         <property key="wpo-lto" value="false"/>
       </C32Global>
+      <item path="DC_Motors_Test.c" ex="true" overriding="false">
+      </item>
       <PICkit3PlatformTool>
         <property key="firmware.download.all" value="false"/>
       </PICkit3PlatformTool>
+      <Tool>
+        <property key="firmware.download.all" value="false"/>
+      </Tool>
     </conf>
   </confs>
 </configurationDescriptor>

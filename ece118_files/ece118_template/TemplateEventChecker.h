@@ -39,13 +39,13 @@
  ******************************************************************************/
 typedef struct {
     int tagID;
-    float Tx, Ty, Tz;
-    float Rx, Ry, Rz;
-} AprilTagPose_t;
+    int tx, ty, tz;
+    int rx, ry, rz;
+} CameraData_t;
 
 static char rxBuffer[CAMERA_BUFFER_SIZE];
 static int bufferIndex = 0;
-static AprilTagPose_t LastDetectedPose;
+extern CameraData_t LatestCameraData;
 /*******************************************************************************
  * PUBLIC FUNCTION PROTOTYPES                                                  *
  ******************************************************************************/

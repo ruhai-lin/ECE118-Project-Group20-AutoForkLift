@@ -5,10 +5,10 @@ from pyb import UART
 
 # --------------------- 相机初始化 ---------------------
 sensor.reset()
-# sensor.set_pixformat(sensor.GRAYSCALE)
-sensor.set_pixformat(sensor.RGB565)
+sensor.set_pixformat(sensor.GRAYSCALE)
+# sensor.set_pixformat(sensor.RGB565)
 
-sensor.set_framesize(sensor.QVGA)
+sensor.set_framesize(sensor.QQVGA)
 sensor.skip_frames(time=2000)
 sensor.set_auto_gain(False)
 sensor.set_auto_whitebal(False)
@@ -25,6 +25,7 @@ uart = UART(3, 115200, timeout_char=200)
 
 # --------------------- 状态初始化 ---------------------
 last_Tx, last_Ty, last_Tz = 0, 0, 0
+last_Rx, last_Ry, last_Rz = 0, 0, 0
 alpha = 0.7
 lost_counter = 0
 max_lost = 5
@@ -48,21 +49,20 @@ while True:
 
         tag_id = tag.id
         Tx, Ty, Tz = tag.x_translation * 10, tag.y_translation * 10, tag.z_translation * 10
-
+        Rx, Ry, Rz = degrees(tag.x_rotation), degrees(tag.y_rotation), degrees(tag.z_rotation)
         # 一阶滤波
         Tx = alpha * last_Tx + (1 - alpha) * Tx
         Ty = alpha * last_Ty + (1 - alpha) * Ty
         Tz = alpha * last_Tz + (1 - alpha) * Tz
+        Rx = alpha * last_Rx + (1 - alpha) * Rx
+        Ry = alpha * last_Ry + (1 - alpha) * Ry
+        Rz = alpha * last_Rz + (1 - alpha) * Rz
 
         last_Tx, last_Ty, last_Tz = Tx, Ty, Tz
+        last_Rx, last_Ry, last_Rz = Rx, Ry, Rz
 
-        Rx = degrees(tag.x_rotation)
-        Ry = degrees(tag.y_rotation)
-        Rz = degrees(tag.z_rotation)
-
-        longitudinal_distance = Tz * math.cos(tag.y_rotation)
-        lateral_distance = Tz * math.sin(tag.y_rotation)
-
+        longitudinal_distance = Tz
+        lateral_distance = Tz * math.tan(tag.y_rotation)
 
         # 绘制矩形和十字标记
         img.draw_rectangle(tag.rect, color=(255, 0, 0))
