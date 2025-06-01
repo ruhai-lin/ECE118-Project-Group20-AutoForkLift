@@ -1,6 +1,7 @@
 import sensor
 import time
 import math
+import pyb
 from pyb import UART
 
 # --------------------- 相机初始化 ---------------------
@@ -34,10 +35,12 @@ def degrees(radians):
     return (180 * radians) / math.pi
 
 # --------------------- 主循环 ---------------------
+# 初始状态
+last_sent_id = -2  # -2 表示从未发送过；-1 表示未检测到tag；0~4表示上一个发送的tag
+
 while True:
     clock.tick()
     img = sensor.snapshot()
-
     img.lens_corr(1.6)
     img.histeq()
 
@@ -46,10 +49,12 @@ while True:
     for tag in img.find_apriltags(fx=f_x, fy=f_y, cx=c_x, cy=c_y, pose_only=False):
         tag_found = True
         lost_counter = 0
+        pyb.LED(3).off()
 
         tag_id = tag.id
         Tx, Ty, Tz = tag.x_translation * 10, tag.y_translation * 10, tag.z_translation * 10
         Rx, Ry, Rz = degrees(tag.x_rotation), degrees(tag.y_rotation), degrees(tag.z_rotation)
+
         # 一阶滤波
         Tx = alpha * last_Tx + (1 - alpha) * Tx
         Ty = alpha * last_Ty + (1 - alpha) * Ty
@@ -61,34 +66,34 @@ while True:
         last_Tx, last_Ty, last_Tz = Tx, Ty, Tz
         last_Rx, last_Ry, last_Rz = Rx, Ry, Rz
 
-        longitudinal_distance = Tz
-        lateral_distance = Tz * math.tan(tag.y_rotation)
-
-        # 绘制矩形和十字标记
+        # 图像显示（可选）
         img.draw_rectangle(tag.rect, color=(255, 0, 0))
         img.draw_cross(tag.cx, tag.cy, color=(0, 255, 0))
 
-        # 绘制信息文字
-        text = "ID:%d T:(%.1f,%.1f,%.1f) \n R:(%d,%d,%d)\nLD:%.1f \n LtD:%.1f" % (
+        text = "ID:%d T:(%.1f,%.1f,%.1f) \n R:(%d,%d,%d)" % (
             tag.id,
             tag.x_translation, tag.y_translation, tag.z_translation,
             int(degrees(tag.x_rotation)),
             int(degrees(tag.y_rotation)),
-            int(degrees(tag.z_rotation)),
-            longitudinal_distance,
-            lateral_distance
+            int(degrees(tag.z_rotation))
         )
         img.draw_string(tag.cx, tag.cy - 30, text, mono_space=False)
 
-        # 串口发送格式
-        msg = "%d,%d,%d,%d,%d,%d,%d\r\n" % (
-            tag_id, int(Tx), int(Ty), int(Tz), int(Rx), int(Ry), int(Rz)
-        )
-        uart.write(msg)
+        # ✅ 只有在 tag ID 发生变化时才发送
+        if tag_id != last_sent_id:
+            msg = "%d,%d,%d,%d,%d,%d,%d\r\n" % (
+                tag_id, int(Tx), int(Ty), int(Tz), int(Rx), int(Ry), int(Rz)
+            )
+            uart.write(msg)
+            last_sent_id = tag_id
         break
 
+    # 如果没有检测到 tag，且上一次发送的不是 -1，则发送一次丢失信号
     if not tag_found:
         lost_counter += 1
         if lost_counter >= max_lost:
-            uart.write("-1,0,0,0,0,0,0\r\n")
+            pyb.LED(3).on()
+            if last_sent_id != -1:
+                uart.write("-1,0,0,0,0,0,0\r\n")
+                last_sent_id = -1
             lost_counter = max_lost

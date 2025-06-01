@@ -1,44 +1,27 @@
 #include "BOARD.h"
-#include "timers.h"
 #include "DC_Motors.h"
-#include <xc.h>
-#include <stdio.h>
+
+#define DELAY(x) for (volatile long i = 0; i < x; i++)
 
 int main(void)
 {
     BOARD_Init();
-    TIMERS_Init();
     DC_Motors_Init();
 
-    printf("=== DC Motor Distance Test ===\n");
+    while (1) {
+        DC_Motors_Forward(400);  // 向前跑，80%速度
+        DELAY(1000000);
 
-    // 向前走 10cm
-    printf("Moving forward 10 cm...\n");
-    DC_Motors_Forward(10.0f);
+        DC_Motors_Backward(250);  // 向后跑，50%速度
+        DELAY(1000000);
 
-    // 等待 1 秒静止
-    TIMERS_InitTimer(1, 1000);
-    while (TIMERS_IsTimerExpired(1) != TIMER_EXPIRED);
-    TIMERS_ClearTimerExpired(1);
+        DC_Motors_Left(300);  // 左转
+        DELAY(1000000);
 
-    // 向后退 5cm
-    printf("Moving backward 10 cm...\n");
-    DC_Motors_Backward(10.0f);
+        DC_Motors_Right(100);  // 右转
+        DELAY(1000000);
 
-    TIMERS_InitTimer(1, 1000);
-    while (TIMERS_IsTimerExpired(1) != TIMER_EXPIRED);
-    TIMERS_ClearTimerExpired(1);
-    
-    printf("Turning Right 45 degree...\n");
-    DC_Motors_Right(45);
-    
-    TIMERS_InitTimer(1, 1000);
-    while (TIMERS_IsTimerExpired(1) != TIMER_EXPIRED);
-    TIMERS_ClearTimerExpired(1);
-    
-    printf("Turning Right 45 degree...\n");
-    DC_Motors_Left(45);
-    
-    printf("Test complete.\n");
-    while (1);
+        DC_Motors_Stop();  // 停车
+        DELAY(1000000);
+    }
 }

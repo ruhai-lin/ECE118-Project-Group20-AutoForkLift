@@ -4,6 +4,8 @@
 #include "HSM_Top.h"
 #include "serial.h"
 #include "AD.h"
+#include "Weight_Sensor.h"
+#include "IO_Ports.h"
 #include "stdio.h"
 #include <BOARD.h>
 #include <xc.h>
@@ -11,9 +13,15 @@
 
 #define BATTERY_DISCONNECT_THRESHOLD 175
 #define CAMERA_BUFFER_SIZE 128
+
+#define WEIGHT_THRESHOLD        420000  // 忽略低于该值的噪声
+#define BUFFER_SIZE 15
+
 #define MAX_TAG_ID 4
 
+
 CameraData_t LatestCameraData;  // <-- 这是定义（不加 static，也不加 extern）
+CameraData_t LockedCameraData;  // 用于锁定检测到时的数据
 
 
 uint8_t TemplateCheckBattery(void) {
@@ -41,6 +49,71 @@ uint8_t TemplateCheckBattery(void) {
     }
     return (returnVal);
 }
+
+
+uint8_t CheckWeight(void) {
+    static ES_EventTyp_t lastEvent = WEIGHT_REMOVED;
+
+    static long weightBuffer[BUFFER_SIZE] = {0};
+    static int bufferIndex = 0;
+    static int bufferFilled = 0;
+
+    ES_Event thisEvent;
+    ES_EventTyp_t curEvent;
+    uint8_t returnVal = FALSE;
+
+    // 非阻塞：DT 引脚未准备好则跳过
+    if (IO_PortsReadPort(WEIGHT_DT_PORT) & WEIGHT_DT_PIN_MASK) {
+        return FALSE;
+    }
+
+    // 读取新值
+    long newSample = WeightSensor_ReadRaw();
+    if ((newSample == 0x7FFFFF) || (newSample == -1)) {
+        return FALSE;
+    }
+
+    // 存入滑动窗口
+    weightBuffer[bufferIndex] = newSample;
+    bufferIndex = (bufferIndex + 1) % BUFFER_SIZE;
+    if (bufferFilled < BUFFER_SIZE) {
+        bufferFilled++;
+    }
+
+    // 计算平均值
+    long sum = 0;
+    for (int i = 0; i < bufferFilled; i++) {
+        sum += weightBuffer[i];
+    }
+    long avg = sum / bufferFilled;
+
+    printf("Avg weight reading: %ld (buffered %d)\n", avg, bufferFilled);
+
+    // 判定当前状态
+    if (abs(avg) > WEIGHT_THRESHOLD) {
+        curEvent = WEIGHT_ADDED;
+    } else {
+        curEvent = WEIGHT_REMOVED;
+    }
+
+    // 状态变化触发事件
+    if (curEvent != lastEvent) {
+        thisEvent.EventType = curEvent;
+        thisEvent.EventParam = avg;
+        lastEvent = curEvent;
+        returnVal = TRUE;
+
+#ifndef EVENTCHECKER_TEST
+        PostTopHSM(thisEvent);
+#else
+        SaveEvent(thisEvent);
+#endif
+    }
+
+    return returnVal;
+}
+
+
 
 
 uint8_t UART2_DataAvailable(void) {
@@ -79,6 +152,9 @@ uint8_t CheckCamera(void) {
                     case 2: curEvent = APRILTAG_2_DETECTED; break;
                     case 3: curEvent = APRILTAG_3_DETECTED; break;
                     case 4: curEvent = APRILTAG_4_DETECTED; break;
+                    case 5: curEvent = APRILTAG_5_DETECTED; break;
+                    case 6: curEvent = APRILTAG_6_DETECTED; break;
+                    case 7: curEvent = APRILTAG_7_DETECTED; break;
                     default: curEvent = APRILTAG_NONE; break;
                 }
 

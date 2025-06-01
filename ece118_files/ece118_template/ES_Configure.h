@@ -52,7 +52,13 @@ typedef enum {
     APRILTAG_2_DETECTED,
     APRILTAG_3_DETECTED,
     APRILTAG_4_DETECTED,
+    APRILTAG_5_DETECTED,
+    APRILTAG_6_DETECTED,
+    APRILTAG_7_DETECTED,
     APRILTAG_NONE, 
+            
+    WEIGHT_ADDED,
+    WEIGHT_REMOVED,
             
 	/* User-defined events end here */
     NUMBEROFEVENTS,
@@ -77,7 +83,13 @@ static const char *EventNames[] = {
     "APRILTAG_2_DETECTED",
     "APRILTAG_3_DETECTED",
     "APRILTAG_4_DETECTED",
+    "APRILTAG_5_DETECTED",
+    "APRILTAG_6_DETECTED",
+    "APRILTAG_7_DETECTED",
     "APRILTAG_NONE",
+    
+    "WEIGHT_ADDED",
+    "WEIGHT_REMOVED",
     
 	"NUMBEROFEVENTS",
 };
@@ -160,7 +172,7 @@ static const char *EventNames[] = {
 // the name of the run function
 #define SERV_1_RUN RunTopHSM
 // How big should this services Queue be?
-#define SERV_1_QUEUE_SIZE 3
+#define SERV_1_QUEUE_SIZE 30
 #endif
 
 // These are the definitions for Service 2

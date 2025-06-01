@@ -34,7 +34,9 @@
       <itemPath>../ece118_files/ece118_base/timers.h</itemPath>
       <itemPath>../ece118_files/ece118_base/DC_Motors.h</itemPath>
       <itemPath>../ece118_files/ece118_template/HSM_Top.h</itemPath>
-      <itemPath>../ece118_files/ece118_template/HSMSub_Idle.h</itemPath>
+      <itemPath>../ece118_files/ece118_base/Weight_Sensor.h</itemPath>
+      <itemPath>../ece118_files/ece118_template/HSMSub_Navigation.h</itemPath>
+      <itemPath>../ece118_files/ece118_base/HSMSub_Operation.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -77,6 +79,9 @@
       <itemPath>../ece118_files/ece118_template/HSMSub_Navigation.c</itemPath>
       <itemPath>../ece118_files/ece118_base/HX711_test.c</itemPath>
       <itemPath>DC_Motors_Test.c</itemPath>
+      <itemPath>../ece118_files/ece118_base/RC_Servo_test.c</itemPath>
+      <itemPath>../ece118_files/ece118_base/Weight_Sensor.c</itemPath>
+      <itemPath>../ece118_files/ece118_template/HSMSub_Operation.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -144,21 +149,95 @@
         <C32Global>
         </C32Global>
       </item>
+      <item path="../ece118_files/ece118_base/RC_Servo_test.c"
+            ex="true"
+            overriding="false">
+        <C32>
+        </C32>
+        <C32-AR>
+        </C32-AR>
+        <C32-AS>
+        </C32-AS>
+        <C32-CO>
+        </C32-CO>
+        <C32-LD>
+        </C32-LD>
+        <C32CPP>
+        </C32CPP>
+        <C32Global>
+        </C32Global>
+      </item>
       <item path="../ece118_files/ece118_template/HSMSub_Idle.c"
             ex="true"
             overriding="false">
+        <C32>
+        </C32>
+        <C32-AR>
+        </C32-AR>
+        <C32-AS>
+        </C32-AS>
+        <C32-CO>
+        </C32-CO>
+        <C32-LD>
+        </C32-LD>
+        <C32CPP>
+        </C32CPP>
+        <C32Global>
+        </C32Global>
       </item>
       <item path="../ece118_files/ece118_template/HSMSub_Navigation.c"
             ex="true"
             overriding="false">
+        <C32>
+        </C32>
+        <C32-AR>
+        </C32-AR>
+        <C32-AS>
+        </C32-AS>
+        <C32-CO>
+        </C32-CO>
+        <C32-LD>
+        </C32-LD>
+        <C32CPP>
+        </C32CPP>
+        <C32Global>
+        </C32Global>
       </item>
       <item path="../ece118_files/ece118_template/TemplateSubHSM.c"
             ex="true"
             overriding="false">
+        <C32>
+        </C32>
+        <C32-AR>
+        </C32-AR>
+        <C32-AS>
+        </C32-AS>
+        <C32-CO>
+        </C32-CO>
+        <C32-LD>
+        </C32-LD>
+        <C32CPP>
+        </C32CPP>
+        <C32Global>
+        </C32Global>
       </item>
       <item path="../ece118_files/ece118_template/TemplateSubHSM.h"
             ex="true"
             overriding="false">
+        <C32>
+        </C32>
+        <C32-AR>
+        </C32-AR>
+        <C32-AS>
+        </C32-AS>
+        <C32-CO>
+        </C32-CO>
+        <C32-LD>
+        </C32-LD>
+        <C32CPP>
+        </C32CPP>
+        <C32Global>
+        </C32Global>
       </item>
       <C32>
         <property key="additional-warnings" value="false"/>
@@ -298,6 +377,20 @@
         <property key="wpo-lto" value="false"/>
       </C32Global>
       <item path="DC_Motors_Test.c" ex="true" overriding="false">
+        <C32>
+        </C32>
+        <C32-AR>
+        </C32-AR>
+        <C32-AS>
+        </C32-AS>
+        <C32-CO>
+        </C32-CO>
+        <C32-LD>
+        </C32-LD>
+        <C32CPP>
+        </C32CPP>
+        <C32Global>
+        </C32Global>
       </item>
       <PICkit3PlatformTool>
         <property key="firmware.download.all" value="false"/>

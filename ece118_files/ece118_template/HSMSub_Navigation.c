@@ -2,7 +2,7 @@
 #include "ES_Framework.h"
 #include "BOARD.h"
 #include "HSM_Top.h"
-#include "HSMSub_Idle.h"
+#include "HSMSub_Navigation.h"
 
 /*******************************************************************************
  * MODULE #DEFINES                                                             *

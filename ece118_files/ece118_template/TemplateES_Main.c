@@ -4,9 +4,11 @@
 #include "LED.h"
 #include "DC_Motors.h"
 #include "RC_Servo.h"
+#include "Weight_Sensor.h"
 #include "timers.h"
 #include "ES_Configure.h"
 #include "ES_Framework.h"
+#include "ES_Timers.h"
 
 #define F_PB (BOARD_GetPBClock())
 #define BAUDRATE 115200
@@ -35,8 +37,14 @@ void main(void)
     LED_Init();
     DC_Motors_Init();
     RC_Init();
-    TIMERS_Init();
+    WeightSensor_Init();
+    ES_Timer_Init();
     
+//    printf("Waiting for weight sensor to respond...\n");
+//    if (!WeightSensor_WaitReady(10000)) {
+//        printf("Weight sensor not responding!\n");
+//    }
+    printf("Waiting for RC Servo to respond...\n");
     if (RC_AddPins(RC_PORTX04) == ERROR) {
         printf("Failed to add servo pin!\n");
     }
