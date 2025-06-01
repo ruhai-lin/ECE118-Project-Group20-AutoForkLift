@@ -99,6 +99,7 @@ ES_Event RunTopHSM(ES_Event ThisEvent)
         if (ThisEvent.EventType == ES_INIT)
         {
             InitOperationSubHSM();
+            RC_SetPulseTime(RC_PORTX04, 1000);
             nextState = WaitingForStartSubsubHSM;
             makeTransition = TRUE;
             ThisEvent.EventType = ES_NO_EVENT;
@@ -123,7 +124,7 @@ ES_Event RunTopHSM(ES_Event ThisEvent)
     case ScanForTagSubsubHSM:
         switch (ThisEvent.EventType) {
         case ES_ENTRY:
-            DC_Motors_Left(350); // 启动自转
+            DC_Motors_Left(200); // 启动自转
             printf("Now in ScanForTag, Target = Tag%d\n", TargetTagID);
             break;
 
@@ -136,7 +137,7 @@ ES_Event RunTopHSM(ES_Event ThisEvent)
         case APRILTAG_7_DETECTED:
             {
                 if (ThisEvent.EventParam == TargetTagID) {
-                    DC_Motors_Stop();
+//                    DC_Motors_Stop();
                     printf("Detected correct tag: %d\n", ThisEvent.EventParam);
                     LockedCameraData = LatestCameraData;
 
@@ -160,21 +161,24 @@ ES_Event RunTopHSM(ES_Event ThisEvent)
         switch (ThisEvent.EventType) {
             case ES_ENTRY:
                 printf("Now in RotateToAlign: angle=%d\n", LatestCameraData.ry);
-                DC_Motors_Right(500);
+                DC_Motors_Right(300);
 //                ES_TimerReturn_t rc = ES_Timer_InitTimer(DELAY_TIMER, LatestCameraData.ry);
 //                if (rc != ES_Timer_OK) {
 //                    printf("InitTimer failed, rc=%d\n", rc);
 //                }
-                ES_Timer_InitTimer(1, 2000);
-//                printf("Now in RotateToAlign - Should wait %d ms\n", 2000);
-//                ThisEvent.EventType = ES_NO_EVENT;
+//                ES_Timer_InitTimer(1, LatestCameraData.ry * 10);
+                ES_TimerReturn_t rc = ES_Timer_InitTimer(1, 5000);
+                if (rc != ES_Timer_OK) {
+                    printf("InitTimer failed, rc=%d\n", rc);
+                }
+                printf("Now in RotateToAlign - Should wait %d ms\n", 5000);
                 break;
 
             case ES_TIMEOUT:
 //                printf("ES_TIMEOUT, EventParam = %d \n", ThisEvent.EventParam);
                 if (ThisEvent.EventParam == 1){
-                    printf("DC Motor Stops! \n");
-                    DC_Motors_Stop();
+//                    printf("DC Motor Stops! \n");
+//                    DC_Motors_Stop();
                     nextState = MoveLateralSubsubHSM;
                     makeTransition = TRUE;
                     ThisEvent.EventType = ES_NO_EVENT;
@@ -208,7 +212,7 @@ ES_Event RunTopHSM(ES_Event ThisEvent)
             case ES_TIMEOUT:
 //                printf("ES_TIMEOUT, EventParam = %d \n", ThisEvent.EventParam);
                 if (ThisEvent.EventParam == 1) {
-                    DC_Motors_Stop();
+//                    DC_Motors_Stop();
                     nextState = RotateToFaceTagSubsubHSM;
                     makeTransition = TRUE;
                     ThisEvent.EventType = ES_NO_EVENT;

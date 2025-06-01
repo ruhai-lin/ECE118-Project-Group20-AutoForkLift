@@ -70,7 +70,7 @@ ES_Event RunOperationSubHSM(ES_Event ThisEvent)
         case InitPSubState:
             if (ThisEvent.EventType == ES_INIT) {
                 
-                nextState = LiftCargoState; // 需要装货
+                nextState = DecideSubState; // 需要装货
                 makeTransition = TRUE;
                 ThisEvent.EventType = ES_NO_EVENT;
             }
@@ -191,12 +191,12 @@ ES_Event RunOperationSubHSM(ES_Event ThisEvent)
                         long avgWeight = sum / validCount;
                         printf("Average weight (raw): %ld (from %d valid samples)\n", avgWeight, validCount);
                         // 根据平均值决定下一个目标 TagID，原逻辑搬来
-                        if (avgWeight <= -420000) {
+                        if (avgWeight <= 260000) {
                             printf("Set TargetTagID = 5 (Light cargo)\n");
                             // 这里假设 TargetTagID 为全局变量，父 HSM 可见
                             extern int TargetTagID;
                             TargetTagID = 5;
-                        } else if (avgWeight <= -400000) {
+                        } else if (avgWeight <= 280000) {
                             printf("Set TargetTagID = 6 (Medium cargo)\n");
                             extern int TargetTagID;
                             TargetTagID = 6;
