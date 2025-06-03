@@ -186,7 +186,7 @@
         </C32Global>
       </item>
       <item path="../ece118_files/ece118_template/HSMSub_Navigation.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C32>
         </C32>

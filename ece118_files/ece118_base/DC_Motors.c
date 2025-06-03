@@ -60,8 +60,10 @@ void DC_Motors_Forward(unsigned int speed)
     MOTOR_B_IN1_LAT = 0;
     MOTOR_B_IN2_LAT = 1;
 
+    int modified_speed = speed * 1.25;
+    
     PWM_SetDutyCycle(PWM_MOTOR_A, speed);
-    PWM_SetDutyCycle(PWM_MOTOR_B, speed);
+    PWM_SetDutyCycle(PWM_MOTOR_B, modified_speed);
 }
 
 void DC_Motors_Backward(unsigned int speed)
@@ -77,21 +79,22 @@ void DC_Motors_Backward(unsigned int speed)
 
 void DC_Motors_Left(unsigned int speed)
 {
-    MOTOR_A_IN1_LAT = 0;
-    MOTOR_A_IN2_LAT = 1;
-    MOTOR_B_IN1_LAT = 1;
-    MOTOR_B_IN2_LAT = 0;
-
+    MOTOR_A_IN1_LAT = 1;
+    MOTOR_A_IN2_LAT = 0;
+    MOTOR_B_IN1_LAT = 0;
+    MOTOR_B_IN2_LAT = 1;
+    
     PWM_SetDutyCycle(PWM_MOTOR_A, speed);
     PWM_SetDutyCycle(PWM_MOTOR_B, speed);
 }
 
 void DC_Motors_Right(unsigned int speed)
 {
-    MOTOR_A_IN1_LAT = 1;
-    MOTOR_A_IN2_LAT = 0;
-    MOTOR_B_IN1_LAT = 0;
-    MOTOR_B_IN2_LAT = 1;
+    
+    MOTOR_A_IN1_LAT = 0;
+    MOTOR_A_IN2_LAT = 1;
+    MOTOR_B_IN1_LAT = 1;
+    MOTOR_B_IN2_LAT = 0;
 
     PWM_SetDutyCycle(PWM_MOTOR_A, speed);
     PWM_SetDutyCycle(PWM_MOTOR_B, speed);

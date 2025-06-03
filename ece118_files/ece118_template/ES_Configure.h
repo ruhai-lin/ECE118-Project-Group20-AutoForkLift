@@ -57,6 +57,8 @@ typedef enum {
     APRILTAG_7_DETECTED,
     APRILTAG_NONE, 
             
+    NAV_DONE,
+            
     WEIGHT_ADDED,
     WEIGHT_REMOVED,
             
@@ -87,6 +89,8 @@ static const char *EventNames[] = {
     "APRILTAG_6_DETECTED",
     "APRILTAG_7_DETECTED",
     "APRILTAG_NONE",
+    
+    "NAV_DONE",
     
     "WEIGHT_ADDED",
     "WEIGHT_REMOVED",
