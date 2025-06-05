@@ -6,6 +6,7 @@
 #include "RC_Servo.h"
 #include "Weight_Sensor.h"
 #include "timers.h"
+#include "LED.h"
 #include "ES_Configure.h"
 #include "ES_Framework.h"
 #include "ES_Timers.h"
@@ -15,17 +16,22 @@
 #define BRGVAL ((F_PB / 16 / BAUDRATE) - 1)
 
 void UART2_Init(void) {
-    U2MODE = 0;
+    U2MODEbits.ON = 0; // 先关闭模块
+    U2MODE = 0;        // 清空所有配置
     U2STA = 0;
+    
+    U2MODEbits.BRGH = 0; // 标准速度
+    U2BRG = 21;          // 根据时钟设置波特率（115200 for 40MHz PBCLK）
 
-    U2BRG = BRGVAL;
-    U2MODEbits.BRGH = 0;        // x16 mode
-    U2MODEbits.PDSEL = 0b00;    // 8-bit, no parity
-    U2MODEbits.STSEL = 0;       // 1 stop bit
+    U2STAbits.UTXEN = 1;
+    U2STAbits.URXEN = 1;
+    U2MODEbits.ON = 1;
 
-    U2STAbits.UTXEN = 1;        // Enable TX
-    U2STAbits.URXEN = 1;        // Enable RX
-    U2MODEbits.ON = 1;          // Turn on UART
+    // 中断配置
+    IEC1bits.U2RXIE = 1;    // 使能接收中断
+    IFS1bits.U2RXIF = 0;    // 清除接收中断标志
+    IPC8bits.U2IP = 2;      // 设置优先级
+    IPC8bits.U2IS = 0;
 }
 
 void main(void)
@@ -39,11 +45,8 @@ void main(void)
     RC_Init();
     WeightSensor_Init();
     ES_Timer_Init();
-    
-//    printf("Waiting for weight sensor to respond...\n");
-//    if (!WeightSensor_WaitReady(10000)) {
-//        printf("Weight sensor not responding!\n");
-//    }
+//    LED_AddBanks(LED_BANK1); // 确保 bank0 已激活
+
     printf("Waiting for RC Servo to respond...\n");
     if (RC_AddPins(RC_PORTX04) == ERROR) {
         printf("Failed to add servo pin!\n");

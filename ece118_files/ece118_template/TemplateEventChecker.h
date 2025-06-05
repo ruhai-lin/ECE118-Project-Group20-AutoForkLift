@@ -33,7 +33,7 @@
  * PUBLIC #DEFINES                                                             *
  ******************************************************************************/
 #define BATTERY_DISCONNECT_THRESHOLD 175
-#define CAMERA_BUFFER_SIZE 128
+#define CAMERA_BUFFER_SIZE 1024
 /*******************************************************************************
  * PUBLIC TYPEDEFS                                                             *
  ******************************************************************************/
@@ -45,6 +45,7 @@ typedef struct {
 
 static char rxBuffer[CAMERA_BUFFER_SIZE];
 static int bufferIndex = 0;
+
 extern CameraData_t LatestCameraData;
 extern CameraData_t LockedCameraData;
 /*******************************************************************************

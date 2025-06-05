@@ -1,6 +1,5 @@
-#ifndef SUB_HSM_NAVIGATION_H  // <- This should be changed to your own guard on both
-#define SUB_HSM_NAVIGATION_H  //    of these lines
-
+#ifndef SUB_TEMPLATE_HSM_H  // <- This should be changed to your own guard on both
+#define SUB_TEMPLATE_HSM_H  //    of these lines
 
 /*******************************************************************************
  * PUBLIC #INCLUDES                                                            *
@@ -11,8 +10,8 @@
 /*******************************************************************************
  * PUBLIC #DEFINES                                                             *
  ******************************************************************************/
-#define SPEED_FACTOR 5
-#define ROTATION_FACTOR 5
+
+
 /*******************************************************************************
  * PUBLIC TYPEDEFS                                                             *
  ******************************************************************************/
@@ -22,9 +21,8 @@
  * PUBLIC FUNCTION PROTOTYPES                                                  *
  ******************************************************************************/
 
-uint8_t InitNavigationSubHSM(void);
+uint8_t InitTemplateSubHSM(void);
+ES_Event RunTemplateSubHSM(ES_Event ThisEvent);
 
-ES_Event RunNavigationSubHSM(ES_Event ThisEvent);
-
-#endif /* SUB_HSM_NAVIGATION_H */
+#endif /* SUB_HSM_Template_H */
 

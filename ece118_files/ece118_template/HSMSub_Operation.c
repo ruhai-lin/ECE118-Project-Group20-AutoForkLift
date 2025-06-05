@@ -80,13 +80,13 @@ ES_Event RunOperationSubHSM(ES_Event ThisEvent)
             switch (ThisEvent.EventType) {
                 case ES_ENTRY:
                     
-                    printf("OperationSubHSM: In DecideSubState\n");
+//                    printf("OperationSubHSM: In DecideSubState\n");
                     
                     if (CargoLoaded) {
-                        printf("Cargo is loaded - Going to LowerCargoState\n");
+//                        printf("Cargo is loaded - Going to LowerCargoState\n");
                         nextState = LowerCargoState;
                     } else {
-                        printf("Cargo is NOT loaded - Going to LiftCargoState\n");
+//                        printf("Cargo is NOT loaded - Going to LiftCargoState\n");
                         nextState = LiftCargoState;
                     }
                     makeTransition = TRUE;
@@ -103,8 +103,8 @@ ES_Event RunOperationSubHSM(ES_Event ThisEvent)
             switch (ThisEvent.EventType) {
                 case ES_ENTRY:
                     // “升起货物”：脉冲给 RC 舵机
-                    printf("OperationSubHSM: Now in LiftCargoState\n");
-                    RC_SetPulseTime(RC_PORTX04, 2000);  // 向上升货
+//                    printf("OperationSubHSM: Now in LiftCargoState\n");
+//                    RC_SetPulseTime(RC_PORTX04, 2000);  // 向上升货
                     // 启动延时 1s，等待货物稳定
                     ES_Timer_InitTimer(1, 1000);
                     break;
@@ -112,6 +112,7 @@ ES_Event RunOperationSubHSM(ES_Event ThisEvent)
                 case ES_TIMEOUT:
                     if (ThisEvent.EventParam == 1) {
                         // 延时到，进入重量采样的子状态
+                        RC_SetPulseTime(RC_PORTX04, 2000);  // 向上升货
                         nextState = SampleWeightState;
                         makeTransition = TRUE;
                         ThisEvent.EventType = ES_NO_EVENT;
@@ -125,9 +126,9 @@ ES_Event RunOperationSubHSM(ES_Event ThisEvent)
 
         case SampleWeightState:
             switch (ThisEvent.EventType) {
-                case ES_ENTRY: {
+                case ES_ENTRY:
                     // 进入采样子状态时，开始“5 次有效读数 + 跳变过滤”逻辑
-                    printf("OperationSubHSM: Now in SampleWeightState\n");
+//                    printf("OperationSubHSM: Now in SampleWeightState\n");
                     ES_Timer_InitTimer(1, 10); // 短时间后触发采样逻辑
                     break;
 
@@ -147,12 +148,12 @@ ES_Event RunOperationSubHSM(ES_Event ThisEvent)
                     while (validCount < REQUIRED_VALID && attempts < MAX_ATTEMPTS) {
                         attempts++;
                         if (!WeightSensor_WaitReady(10000)) {
-                            printf("  [%d] Sensor not ready (timeout)\n", attempts);
+//                            printf("  [%d] Sensor not ready (timeout)\n", attempts);
                             continue;
                         }
                         long raw = WeightSensor_ReadRaw();
                         if ((raw == 0x7FFFFF) || (raw == -1) || (raw == -393217)) {
-                            printf("  [%d] Invalid read\n", attempts);
+//                            printf("  [%d] Invalid read\n", attempts);
                             continue;
                         }
                         if (!stableFound) {
@@ -166,11 +167,11 @@ ES_Event RunOperationSubHSM(ES_Event ThisEvent)
                                     sum += firstCandidate + raw;
                                     validCount = 2;
                                     stableFound = 1;
-                                    printf("  [1] Stable start: %ld\n", firstCandidate);
-                                    printf("  [2] Stable next : %ld\n", raw);
+//                                    printf("  [1] Stable start: %ld\n", firstCandidate);
+//                                    printf("  [2] Stable next : %ld\n", raw);
                                     continue;
                                 } else {
-                                    printf("  [%d] Unstable start pair: %ld and %ld -> retry\n", attempts, firstCandidate, raw);
+//                                    printf("  [%d] Unstable start pair: %ld and %ld -> retry\n", attempts, firstCandidate, raw);
                                     validCount = 0;  // 重来
                                     continue;
                                 }
@@ -178,45 +179,44 @@ ES_Event RunOperationSubHSM(ES_Event ThisEvent)
                         }
                         // 后续跳变判定
                         if (abs(raw - lastValid) > JUMP_THRESHOLD) {
-                            printf("  [%d] Jump detected! raw=%ld, last=%ld -> dropped\n", attempts, raw, lastValid);
+//                            printf("  [%d] Jump detected! raw=%ld, last=%ld -> dropped\n", attempts, raw, lastValid);
                             continue;
                         }
-                        printf("  [%d] Valid sample = %ld\n", validCount + 1, raw);
+//                        printf("  [%d] Valid sample = %ld\n", validCount + 1, raw);
                         sum += raw;
                         lastValid = raw;
                         validCount++;
                     }
-
+                    extern int TargetTagID;
                     if (validCount >= REQUIRED_VALID) {
                         long avgWeight = sum / validCount;
-                        printf("Average weight (raw): %ld (from %d valid samples)\n", avgWeight, validCount);
+//                        printf("Average weight (raw): %ld (from %d valid samples)\n", avgWeight, validCount);
                         // 根据平均值决定下一个目标 TagID，原逻辑搬来
-                        if (avgWeight <= 260000) {
-                            printf("Set TargetTagID = 5 (Light cargo)\n");
+                        if (avgWeight <= 270000) {
+//                            printf("Set TargetTagID = 8 (Light cargo)\n");
                             // 这里假设 TargetTagID 为全局变量，父 HSM 可见
-                            extern int TargetTagID;
-                            TargetTagID = 5;
-                        } else if (avgWeight <= 280000) {
-                            printf("Set TargetTagID = 6 (Medium cargo)\n");
-                            extern int TargetTagID;
-                            TargetTagID = 6;
+                            TargetTagID = 8;
+                        } else if (avgWeight <= 293000) {
+//                            printf("Set TargetTagID = 9 (Medium cargo)\n");
+                            TargetTagID = 9;
                         } else {
-                            printf("Set TargetTagID = 7 (Heavy cargo)\n");
-                            extern int TargetTagID;
-                            TargetTagID = 7;
+//                            printf("Set TargetTagID = 10 (Heavy cargo)\n");
+                            TargetTagID = 10;
                         }
-                        // 准备下降物流，切换到 LowerCargoState
-                        CargoLoaded = TRUE; // 🚨 标记货物已装上
-                        CurrentState = DecideSubState;
-                        makeTransition = TRUE;
-//                        ThisEvent.EventType = WEIGHT_ADDED;
-                        return (ES_Event){ .EventType = WEIGHT_ADDED };
-                        break;
-
+                       
+                    } else {
+//                        printf("Sampling failed. Default to TargetTagID = 8 (Light cargo)\n");
+                        TargetTagID = 9;
                     }
-                    break;
+                    
+                    // 准备下降物流，切换到 LowerCargoState
+                    CargoLoaded = TRUE; // 🚨 标记货物已装上
+                    CurrentState = DecideSubState;
+                    makeTransition = TRUE;
+//                        ThisEvent.EventType = WEIGHT_ADDED;
+                    return (ES_Event){ .EventType = WEIGHT_ADDED, .EventParam = 0};
                 }
-                }
+               
                 
                 default:
                     break;
@@ -226,7 +226,7 @@ ES_Event RunOperationSubHSM(ES_Event ThisEvent)
         case LowerCargoState:
             switch (ThisEvent.EventType) {
                 case ES_ENTRY:
-                    printf("LowerCargoState\n");
+//                    printf("LowerCargoState\n");
                     RC_SetPulseTime(RC_PORTX04, 1000);
                     ES_Timer_InitTimer(1, 500); // 半秒后视为卸货完成
                     break;

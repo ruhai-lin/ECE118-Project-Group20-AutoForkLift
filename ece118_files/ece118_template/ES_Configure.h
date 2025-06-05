@@ -23,7 +23,7 @@
 //#define POSTFUNCTION_FOR_KEYBOARD_INPUT PostGenericService
 
 //define for TattleTale
-#define USE_TATTLETALE
+//#define USE_TATTLETALE
 
 //uncomment to supress the entry and exit events
 //#define SUPPRESS_EXIT_ENTRY_IN_TATTLE
@@ -55,6 +55,9 @@ typedef enum {
     APRILTAG_5_DETECTED,
     APRILTAG_6_DETECTED,
     APRILTAG_7_DETECTED,
+    APRILTAG_8_DETECTED,
+    APRILTAG_9_DETECTED,
+    APRILTAG_10_DETECTED,
     APRILTAG_NONE, 
             
     NAV_DONE,
@@ -88,6 +91,9 @@ static const char *EventNames[] = {
     "APRILTAG_5_DETECTED",
     "APRILTAG_6_DETECTED",
     "APRILTAG_7_DETECTED",
+    "APRILTAG_8_DETECTED",
+    "APRILTAG_9_DETECTED",
+    "APRILTAG_10_DETECTED",
     "APRILTAG_NONE",
     
     "NAV_DONE",
@@ -116,7 +122,7 @@ static const char *EventNames[] = {
 #define TIMER_UNUSED ((pPostFunc)0)
 #define TIMER0_RESP_FUNC PostTopHSM // Replace TIMER_UNUSED with e.g.,PostTemplateService 
 #define TIMER1_RESP_FUNC PostTopHSM
-#define TIMER2_RESP_FUNC TIMER_UNUSED
+#define TIMER2_RESP_FUNC PostTopHSM
 #define TIMER3_RESP_FUNC TIMER_UNUSED
 #define TIMER4_RESP_FUNC TIMER_UNUSED
 #define TIMER5_RESP_FUNC TIMER_UNUSED
@@ -139,7 +145,8 @@ static const char *EventNames[] = {
 // the timer number matches where the timer event will be routed
 
 #define GENERIC_NAMED_TIMER 0 /*make sure this is enabled above and posting to the correct state machine*/
-#define DELAY_TIMER  1
+#define DELAY_TIMER1  1
+#define DELAY_TIMER2  2
 
 /****************************************************************************/
 // The maximum number of services sets an upper bound on the number of 
@@ -176,7 +183,7 @@ static const char *EventNames[] = {
 // the name of the run function
 #define SERV_1_RUN RunTopHSM
 // How big should this services Queue be?
-#define SERV_1_QUEUE_SIZE 3
+#define SERV_1_QUEUE_SIZE 9
 #endif
 
 // These are the definitions for Service 2

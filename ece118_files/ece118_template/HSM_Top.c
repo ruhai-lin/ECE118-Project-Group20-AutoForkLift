@@ -7,6 +7,7 @@
 #include "RC_Servo.h"
 #include "LED.h"
 #include "Weight_Sensor.h"
+#include "LED.h"
 #include "math.h"
 #include <xc.h>
 #include "TemplateEventChecker.h"
@@ -90,7 +91,7 @@ ES_Event RunTopHSM(ES_Event ThisEvent)
         if (ThisEvent.EventType == ES_INIT)
         {
             InitOperationSubHSM();
-            RC_SetPulseTime(RC_PORTX04, 1000);
+            RC_SetPulseTime(RC_PORTX04, 2000);
             nextState = WaitingForStartSubsubHSM;
             makeTransition = TRUE;
             ThisEvent.EventType = ES_NO_EVENT;
@@ -136,6 +137,7 @@ ES_Event RunTopHSM(ES_Event ThisEvent)
             printf("HSM WEIGHT_REMOVED Received\n");
             TaskCount += 1;
             TargetTagID = TaskCount + 1;
+//            TargetTagID = 1;
             nextState = NavigationSubHSM;
             makeTransition = TRUE;
             ThisEvent.EventType = ES_NO_EVENT;
