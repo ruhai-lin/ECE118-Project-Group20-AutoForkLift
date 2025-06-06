@@ -17,7 +17,7 @@
 #define MOTOR_B_IN2_LAT  PORTV08_LAT
 
 // PWM output channels
-#define PWM_MOTOR_A PWM_PORTX11  // Connect to ENA of L298N
+#define PWM_MOTOR_A PWM_PORTY04  // Connect to ENA of L298N
 #define PWM_MOTOR_B PWM_PORTY10  // Connect to ENB of L298N
 
 void DC_Motors_Init(void);

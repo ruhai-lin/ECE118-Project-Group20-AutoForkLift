@@ -149,23 +149,7 @@ ES_Event RunNavigationSubHSM(ES_Event ThisEvent)
 //                    printf("Locked Info: tag id = %d, tx = %d, ty = %d, tz = %d, rx = %d, ry = %d, rz = %d\n",
 //                        LockedCameraData.tagID, LockedCameraData.tx, LockedCameraData.ty,
 //                        LockedCameraData.tz, LockedCameraData.rx, LockedCameraData.ry, LockedCameraData.rz);
-//                    
-                    
-//                    nextState = MoveToTagSubsubHSM;
-                    // 判断是否需要跳过对齐
-                    if (((LockedCameraData.tx <= -CENTER_TX_MAX) || (LockedCameraData.tx >= -CENTER_TX_MIN)) && ((LockedCameraData.ry <= 30) || (LockedCameraData.ry >= 330))) {  // && ((LockedCameraData.ry <= 10) || (LockedCameraData.ry >= 350))
-//                        printf("rx in [-140, 0] - MoveToTag\n");
-                        nextState = MoveToTagSubsubHSM;
-                    } else {
-                        nextState = RotateToAlignSubsubHSM;
-                    }
-                    
-                    if (LockedCameraData.tz >= -50){
-                        CurrentState = BackwardingSubsubHSM;
-                        makeTransition = TRUE;
-                        return (ES_Event){ .EventType = NAV_DONE, .EventParam = 0 };
-                    }
-                    
+                    nextState = MoveToTagSubsubHSM;               
                     makeTransition = TRUE;
                     ThisEvent.EventType = ES_NO_EVENT;
                 } else {
@@ -327,63 +311,57 @@ ES_Event RunNavigationSubHSM(ES_Event ThisEvent)
             switch (ThisEvent.EventType) {
                 case ES_ENTRY:
                 {
-                    int longitudinal_distance = abs(LockedCameraData.tz) * SPEED_FACTOR;
-                    printf("Now in MoveToTag: dist=%dms\n", longitudinal_distance);
-
-                    // 启动总运动时间
-                    ES_Timer_InitTimer(1, longitudinal_distance);
-
-                    // 启动每200ms调整速度的定时器
-                    ES_Timer_InitTimer(2, 200);
+                    printf("MoveToTag: ENTER\n");
+                    // 启动周期性调整与距离判断定时器（每100ms）
+                    ES_Timer_InitTimer(2, 50);
                     break;
                 }
 
                 case ES_TIMEOUT:
-                    if (ThisEvent.EventParam == 1) {
-                        DC_Motors_Stop();
-
-                        // 再读取一次 tz，判断是否继续前进
+                    if (ThisEvent.EventParam == 2) {
+                        int tagID = LatestCameraData.tagID;
+                        int tx = LatestCameraData.tx;
                         int tz = LatestCameraData.tz;
                         int abs_tz = abs(tz);
 
-                        if (tz != 0 && tz != -1 && abs_tz > 100) {
-                            // 还没到，继续前进
-                            int next_distance = abs_tz * (SPEED_FACTOR-1);
-                            printf("Still far (tz = %d), move forward again %dms\n", tz, next_distance);
-                            DC_Motors_Forward(600, 600);
-                            ES_Timer_InitTimer(1, next_distance);
-                        } else {
-                            // 否则进入后退
-                            printf("Arrived. Begin backwarding.\n");
+                        // 如果是目标 Tag 且 tz 足够近，就认为到达
+                        if ((tagID == TargetTagID) && (tz != -1) && (abs_tz < 70)) {
+                            printf("Arrived at target tag %d (tz = %d). Begin backwarding.\n", tagID, tz);
+                            DC_Motors_Stop();
                             CurrentState = BackwardingSubsubHSM;
                             makeTransition = TRUE;
                             return (ES_Event){ .EventType = NAV_DONE, .EventParam = 0 };
                         }
-                    } 
-                    else if (ThisEvent.EventParam == 2) {
-                        // 每200ms：基于tx重新设置速度
-                        int tx = LatestCameraData.tx;
-                        int leftSpeed = 600;
-                        int rightSpeed = 600;
 
-                        if (tx > -70) {
-                            // 偏右，左轮快
-                            leftSpeed = 500;
-                            rightSpeed = 600;
-                        } else if (tx < -70) {
-                            // 偏左，右轮快
-                            leftSpeed = 600;
-                            rightSpeed = 500;
+                        // 否则判断是否要摆头或微调方向
+                        int leftSpeed = 250;
+                        int rightSpeed = 250;
+
+                        if (tagID != TargetTagID) {
+                            // 非目标Tag，执行左右摆头
+                            nextState = ScanForTagSubsubHSM;
+                            makeTransition = TRUE;
+                            ThisEvent.EventType = ES_NO_EVENT;
+                            printf("Going back to Searching... Detected tag %d, but target is %d\n", tagID, TargetTagID);
                         } else {
-                            // 居中，直行
-                            leftSpeed = 600;
-                            rightSpeed = 600;
+                            // 目标Tag但未靠近，根据tx微调方向
+                            if (tx > -28) {
+                                leftSpeed = 250;
+                                rightSpeed = 275;
+                                printf("Turning left\n");
+                            } else if (tx < -32) {
+                                leftSpeed = 275;
+                                rightSpeed = 250;
+                                printf("Turning right\n");
+                            }
+                            printf("Tracking tag %d | tx = %d | tz = %d\n", tagID, tx, tz);
                         }
 
                         DC_Motors_Forward(leftSpeed, rightSpeed);
-                        ES_Timer_InitTimer(2, 200);  // 再等200ms
+                        ES_Timer_InitTimer(2, 50);  // 再次每100ms执行一次
                     }
                     break;
+
 
                 default:
                     break;

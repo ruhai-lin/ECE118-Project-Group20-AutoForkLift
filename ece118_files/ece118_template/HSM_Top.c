@@ -91,7 +91,7 @@ ES_Event RunTopHSM(ES_Event ThisEvent)
         if (ThisEvent.EventType == ES_INIT)
         {
             InitOperationSubHSM();
-            RC_SetPulseTime(RC_PORTX04, 2000);
+            RC_SetPulseTime(RC_PORTX04, 1000);
             nextState = WaitingForStartSubsubHSM;
             makeTransition = TRUE;
             ThisEvent.EventType = ES_NO_EVENT;
